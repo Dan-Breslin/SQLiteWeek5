@@ -2,6 +2,7 @@ package com.example.sqliteweek5;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -24,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("Drop table if exists user");
     }
 
-    public boolean insert(String email,String password){
+    public Boolean insert(String email,String password){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("email",email);
@@ -32,5 +33,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long ins = db.insert("user",null,contentValues);
         if (ins ==-1) return false;
         else return true;
+    }
+
+    public Boolean checkEmail(String email){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("Select * from user where email=?",new String[]{email});
+        if(cursor.getCount()>0) return false;
+        else return true;
+    }
+
+    public Boolean checkPassword(String email, String password){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from user where email=? and password=?", new String[]{email,password});
+        if (cursor.getCount()>0) return true;
+        else return false;
     }
 }
